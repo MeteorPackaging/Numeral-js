@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "numeral": {
+      "version": "1.5.3"
+    }
+  }
+}

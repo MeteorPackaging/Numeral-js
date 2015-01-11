@@ -61,6 +61,20 @@ module.exports = function(grunt) {
                 'strict': false,
                 'quotmark': 'single'
             }
+        },
+       // Meteor commands to test and publish package
+        exec: {
+          'meteor-init': {
+            // make sure Meteor is installed to run tests
+            command: 'type meteor >/dev/null 2>&1 || { curl https://install.meteor.com/ | sh; }'
+          },
+          'meteor-cleanup': {
+            // remove build files
+            command: 'rm -rf .build.* versions.json'
+          },
+          'meteor-test': {
+            command: 'spacejam --mongo-url mongodb:// test-packages ./'
+          }
         }
     });
 
@@ -68,9 +82,18 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-exec');
+
+    // meteor tasks
+    grunt.registerTask('meteor-test', [
+        'exec:meteor-init',
+        'exec:meteor-test',
+        'exec:meteor-cleanup'
+    ]);
 
     grunt.registerTask('default', [
-        'test'
+        'test',
+        'meteor-test'
     ]);
 
     grunt.registerTask('test', [
@@ -88,4 +111,5 @@ module.exports = function(grunt) {
 
     // Travis CI task.
     grunt.registerTask('travis', ['test']);
+
 };
